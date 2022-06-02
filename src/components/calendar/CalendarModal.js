@@ -3,8 +3,8 @@ import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
-import modalSlice from '../../reducers/modalSlice';
+// import { useDispatch } from 'react-redux';
+// import modalSlice from '../../reducers/modalSlice';
 
 
 const customStyles = {
@@ -23,13 +23,13 @@ Modal.setAppElement('#root');
 
 const now = moment();
 
-// const dateStart = moment().minutes(0).second(0).add( 1, 'hours') //to set time from 3.45.52 to 4.00.00
+const dateStart = moment().minutes(0).second(0).add( 1, 'hours') //to set time from 3.45.52 to 4.00.00
 
 const end = moment().minutes(0).second(0).add(1, 'hours');
 
 export const CalendarModal = () => {
 
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
 
     const [formValue, setformValue] = useState({
         title: 'Evento',
@@ -48,11 +48,11 @@ export const CalendarModal = () => {
         })
     }
 
-    // const [modalBehave, setmodalBehave] = useState( true )  useState to manipulate modal behave
+    const [modalBehave, setmodalBehave] = useState( true )  //useState to manipulate modal behave
 
-    // const closeModal = () => {
-    //     setmodalBehave(false)
-    // }
+    const closeModal = () => {
+        setmodalBehave(false)
+    }
 
     const [startDate, setstartDate] = useState(now.toDate())
 
@@ -99,7 +99,7 @@ export const CalendarModal = () => {
     return (
         <div>
             <Modal
-                isOpen={false}   //modalBehave to add new state
+                isOpen={true}   //modalBehave to add new state
                 // onRequestClose={closeModal}
                 closeTimeoutMS={200}
                 style={customStyles}
@@ -109,7 +109,10 @@ export const CalendarModal = () => {
 
                 <h1> Nuevo evento </h1>
                 <hr />
-                <form className="container">
+                <form 
+                onSubmit={handleSubmitForm}
+                className="container"
+                >
 
                     <div className="form-group">
                         <label>Fecha y hora inicio</label>
@@ -161,7 +164,6 @@ export const CalendarModal = () => {
                     <button
                         type="submit"
                         className="btn btn-outline-primary btn-block"
-                        onClick={handleSubmitForm}
                     >
                         <i className="far fa-save"></i>
                         <span> Guardar</span>

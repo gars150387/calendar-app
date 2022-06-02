@@ -1,7 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import modalSlice from '../../reducers/modalSlice'
+// import modalSlice from '../../reducers/modalSlice'
 
 import { messages } from '../helper/calendar-messages-es'
 import { Navbar } from '../ui/Navbar'
@@ -10,10 +10,10 @@ import { CalendarModal } from './CalendarModal'
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendarScreen.css'
-import { useDispatch } from 'react-redux'
-import calendarSlice from '../../reducers/calendarSlice'
+// import { useDispatch } from 'react-redux'
+// import calendarSlice from '../../reducers/calendarSlice'
 
-// import 'moment/locale/es'  // this is the config to change the language in moment
+import 'moment/locale/es'  // this is the config to change the language in moment
 
 moment.locale( 'es' )
 
@@ -22,13 +22,12 @@ const localizer = momentLocalizer(moment);
 
 export const CalendarScreen = () => {
 
-    const dispatch = useDispatch()
 
-    // const [lastView, setlastView] = useState( localStorage.getItem( 'lastView' ) || 'Month' )
+    const [lastView, setlastView] = useState( localStorage.getItem( 'lastView' ) || 'Month' )
 
 
     const doubleCLick = (e) =>{
-        dispatch(modalSlice())
+        console.log(e)
     }
 
     const onSelectEvent = (e) =>{
@@ -36,7 +35,7 @@ export const CalendarScreen = () => {
     }
 
     const onViewChange = (e) =>{
-        // setlastView(e)
+        setlastView(e)
         localStorage.setItem( 'lastView', e)
     }
 
@@ -51,8 +50,12 @@ export const CalendarScreen = () => {
         }
     }
 
-    const event = () =>{
-        dispatch(calendarSlice())
+    const event = {
+        title: 'cumpleanos de mi mama',
+        start: moment().toDate(),
+        end: moment().add(2, 'hours').toDate(),
+        bgcolor: '#fafafa',
+        notes: 'comprar el pastel',
     }
     
 
@@ -63,7 +66,7 @@ export const CalendarScreen = () => {
 
             <Calendar
                 localizer={localizer}
-                events={ event }
+                event={ event }
                 startAccessor="start"
                 endAccessor="end"
                 notes="notes"
@@ -72,9 +75,9 @@ export const CalendarScreen = () => {
                 onDoubleClickEvent={ doubleCLick }
                 onSelectEvent={ onSelectEvent }
                 onView={ onViewChange }
-                // view={ lastView }
+                view={ lastView }
                 components={{
-                    events: CalendarEvent
+                    event: CalendarEvent
                 }}
             />
 
