@@ -23,7 +23,7 @@ Modal.setAppElement('#root');
 
 const now = moment();
 
-const dateStart = moment().minutes(0).second(0).add( 1, 'hours') //to set time from 3.45.52 to 4.00.00
+const dateStart = moment().minutes(0).second(0).add(1, 'hours') //to set time from 3.45.52 to 4.00.00
 
 const end = moment().minutes(0).second(0).add(1, 'hours');
 
@@ -32,7 +32,7 @@ export const CalendarModal = () => {
     // const dispatch = useDispatch()
 
     const [formValue, setformValue] = useState({
-        title: 'Evento',
+        title: '',
         notes: '',
         start: now.toDate(),
         end: end
@@ -48,7 +48,7 @@ export const CalendarModal = () => {
         })
     }
 
-    const [modalBehave, setmodalBehave] = useState( true )  //useState to manipulate modal behave
+    const [modalBehave, setmodalBehave] = useState(true)  //useState to manipulate modal behave
 
     const closeModal = () => {
         setmodalBehave(false)
@@ -74,32 +74,39 @@ export const CalendarModal = () => {
         })
     }
 
-    const [isValid, setisValid] = useState(true)
+    const [isValid, setIsValid] = useState(false)
+
+    const [disabled, setDisabled] = useState(true)
+
+    const enabledButton = () => {
+        setDisabled(false)
+    }
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
-
-        console.log(formValue)
 
         const momentStart = moment(startDate)
         const momentEnd = moment(endDate)
 
         if (momentStart.isSameOrAfter(momentEnd)) {
-            Swal.fire('Error', 'Fecha de finalizacion debe ser mayor a la fecha de inicio', 'error')
+            return setIsValid(false)
+        }
+        if (title.trim().length <= 2 || notes.trim().length <= 2) {
+            return setIsValid(false)
         }
 
-        if (title.trim().length <= 2) {
-            setisValid(false)
-        } else {
-            setisValid(true);
-        }
+        return  setDisabled(false)
+                setIsValid(true)
+                closeModal()
+
+
     }
 
-  
+
     return (
         <div>
             <Modal
-                isOpen={true}   //modalBehave to add new state
+                isOpen={modalBehave}   //modalBehave to add new state
                 // onRequestClose={closeModal}
                 closeTimeoutMS={200}
                 style={customStyles}
@@ -109,9 +116,9 @@ export const CalendarModal = () => {
 
                 <h1> Nuevo evento </h1>
                 <hr />
-                <form 
-                onSubmit={handleSubmitForm}
-                className="container"
+                <form
+                    onSubmit={handleSubmitForm}
+                    className="container"
                 >
 
                     <div className="form-group">
@@ -138,7 +145,7 @@ export const CalendarModal = () => {
                         <label>Titulo y notas</label>
                         <input
                             type="text"
-                            className={`form-control ${!isValid && 'is-invalid'}`}
+                            className={`form-control ${isValid && 'is-invalid'}`}
                             placeholder="Título del evento"
                             name="title"
                             autoComplete="off"
@@ -151,7 +158,7 @@ export const CalendarModal = () => {
                     <div className="form-group">
                         <textarea
                             type="text"
-                            className="form-control"
+                            className={`form-control ${isValid && 'is-invalid'}`}
                             placeholder="Notas"
                             rows="5"
                             name="notes"
@@ -164,6 +171,7 @@ export const CalendarModal = () => {
                     <button
                         type="submit"
                         className="btn btn-outline-primary btn-block"
+                        disabled={disabled}
                     >
                         <i className="far fa-save"></i>
                         <span> Guardar</span>
