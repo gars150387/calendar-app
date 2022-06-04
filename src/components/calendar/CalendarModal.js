@@ -3,8 +3,7 @@ import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 import Swal from 'sweetalert2';
-// import { useDispatch } from 'react-redux';
-// import modalSlice from '../../reducers/modalSlice';
+import { invalid } from 'moment';
 
 
 const customStyles = {
@@ -21,27 +20,28 @@ const customStyles = {
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement('#root');
 
-const now = moment();
-
-const dateStart = moment().minutes(0).second(0).add(1, 'hours') //to set time from 3.45.52 to 4.00.00
-
-const end = moment().minutes(0).second(0).add(1, 'hours');
 
 export const CalendarModal = () => {
 
     // const dispatch = useDispatch()
 
+    const now = moment().minutes(0).seconds(0);
+
+    const dateStart = now.clone() //to set time from 3.45.52 to 4.00.00
+
+    const dateEnd = dateStart.clone().add(1, 'hours');
+
+
     const [formValue, setformValue] = useState({
         title: '',
         notes: '',
         start: now.toDate(),
-        end: end
+        end: dateEnd.toDate()
     })
 
-    const { notes, title } = formValue;
+    const { notes, title, start, end } = formValue;
 
     const handleInputChange = ({ target }) => {
-
         setformValue({
             ...formValue,
             [target.name]: target.value
@@ -54,50 +54,52 @@ export const CalendarModal = () => {
         setmodalBehave(false)
     }
 
-    const [startDate, setstartDate] = useState(now.toDate())
+    const [startDate, setStartDate] = useState(now.toDate())
 
     const handleStartDateChange = (e) => {
-        setstartDate(e);
+        setStartDate(e);
         setformValue({
             ...formValue,
             start: e
         })
+
     }
 
-    const [endDate, setEndDate] = useState(end.toDate())
+    const [endDate, setEndDate] = useState(dateEnd.toDate())
 
     const handleEndDateChange = (e) => {
         setEndDate(e);
         setformValue({
             ...formValue,
-            endt: e
+            end: e
         })
     }
 
-    const [isValid, setIsValid] = useState(false)
+    const [validTitle, setValidTitle] = useState(true)
 
-    const [disabled, setDisabled] = useState(true)
-
-    const enabledButton = () => {
-        setDisabled(false)
-    }
+    const [validNote, setValidNote] = useState(true)
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
 
-        const momentStart = moment(startDate)
-        const momentEnd = moment(endDate)
+        const momentStart = moment(start)
+        const momentEnd = moment(end)
 
         if (momentStart.isSameOrAfter(momentEnd)) {
-            return setIsValid(false)
-        }
-        if (title.trim().length <= 2 || notes.trim().length <= 2) {
-            return setIsValid(false)
+            return Swal.fire('Error', 'testing', 'error')
         }
 
-        return  setDisabled(false)
-                setIsValid(true)
-                closeModal()
+        if (title.trim().length < 3) {
+            return setValidTitle(false)
+        }
+        
+        if (notes.trim().length < 3) {
+            return setValidTitle(false)
+        }
+
+        setValidTitle(true)
+        setValidNote(true)
+        closeModal()
 
 
     }
@@ -145,7 +147,7 @@ export const CalendarModal = () => {
                         <label>Titulo y notas</label>
                         <input
                             type="text"
-                            className={`form-control ${isValid && 'is-invalid'}`}
+                            className={`form-control ${!validTitle && 'is-invalid'}`}
                             placeholder="Título del evento"
                             name="title"
                             autoComplete="off"
@@ -158,7 +160,7 @@ export const CalendarModal = () => {
                     <div className="form-group">
                         <textarea
                             type="text"
-                            className={`form-control ${isValid && 'is-invalid'}`}
+                            className={`form-control ${!validNote && 'is-invalid'} `}
                             placeholder="Notas"
                             rows="5"
                             name="notes"
@@ -170,8 +172,8 @@ export const CalendarModal = () => {
 
                     <button
                         type="submit"
-                        className="btn btn-outline-primary btn-block"
-                        disabled={disabled}
+                        className="btn btn-`outline-primary btn-block"
+                        disabled={false}
                     >
                         <i className="far fa-save"></i>
                         <span> Guardar</span>
