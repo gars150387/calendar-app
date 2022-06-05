@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { openModal } from '../../reducers/modalSlice'
 import { messages } from '../helper/calendar-messages-es'
 import { Navbar } from '../ui/Navbar'
@@ -10,11 +10,12 @@ import { CalendarModal } from './CalendarModal'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendarScreen.css'
 import 'moment/locale/es'  // this is the config to change the language in moment
-import {FaRegCalendarPlus} from 'react-icons/fa'
+import { activedEvent, eventSelected, selectAllEvents }  from '../../reducers/calendarSlice'
 
 moment.locale('es')
 
 const localizer = momentLocalizer(moment);
+
 
 
 export const CalendarScreen = () => {
@@ -22,14 +23,17 @@ export const CalendarScreen = () => {
     const distpach = useDispatch();
 
 
-    const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'Month')
+    const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'month')
 
 
     const doubleCLick = (e) => {
         distpach(openModal())
+        distpach( eventSelected())
+        distpach( activedEvent())
     }
 
     const onSelectEvent = (e) => {
+        distpach( eventSelected(e))
         console.log(e)
     }
 
@@ -38,7 +42,7 @@ export const CalendarScreen = () => {
         localStorage.setItem('lastView', e)
     }
 
-    const eventStyleGetter = ({ event, start, end, isSelected }) => {
+    const eventStyleGetter = ({ events, start, end, isSelected }) => {
 
         const style = {
             backgroundColor: '#367cf7',
@@ -49,14 +53,8 @@ export const CalendarScreen = () => {
         }
     }
 
-    const event = {
-        title: 'cumpleanos de mi mama',
-        start: moment().toDate(),
-        end: moment().add(2, 'hours').toDate(),
-        bgcolor: '#fafafa',
-        notes: 'comprar el pastel',
-    }
 
+const allevents = useSelector( selectAllEvents )
 
     return (
         <div className='calendar-screen'>
@@ -65,7 +63,7 @@ export const CalendarScreen = () => {
 
             <Calendar
                 localizer={localizer}
-                event={event}
+                events={allevents}
                 startAccessor="start"
                 endAccessor="end"
                 notes="notes"
@@ -80,7 +78,6 @@ export const CalendarScreen = () => {
                 }}
             />
 
-            <FaRegCalendarPlus onClick={ doubleCLick } className='add-event-button'/>
             <CalendarModal />
         </div>
     )

@@ -5,6 +5,7 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../../reducers/modalSlice'
+import { eventAddNew } from '../../reducers/calendarSlice';
 
 
 const customStyles = {
@@ -21,6 +22,18 @@ const customStyles = {
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement('#root');
 
+const now = moment().minutes(0).seconds(0);
+
+const dateStart = now.clone() //to set time from 3.45.52 to 4.00.00
+
+const dateEnd = dateStart.clone().add(1, 'hours');
+
+const initEvent = {
+    title: '',
+    notes: '',
+    start: now.toDate(),
+    end: dateEnd.toDate()
+}
 
 export const CalendarModal = () => {
 
@@ -28,18 +41,7 @@ export const CalendarModal = () => {
 
     const { modalOpen } =  useSelector( state => state.modal)
 
-    const now = moment().minutes(0).seconds(0);
-
-    const dateStart = now.clone() //to set time from 3.45.52 to 4.00.00
-
-    const dateEnd = dateStart.clone().add(1, 'hours');
-
-    const [formValue, setformValue] = useState({
-        title: '',
-        notes: '',
-        start: now.toDate(),
-        end: dateEnd.toDate()
-    })
+    const [formValue, setformValue] = useState(initEvent)
 
     const { notes, title, start, end } = formValue;
 
@@ -52,6 +54,7 @@ export const CalendarModal = () => {
 
     const closeModalBehave = () => {
         dispatch( closeModal() )
+        setformValue( initEvent )
     }
 
     const [startDate, setStartDate] = useState(now.toDate())
@@ -82,6 +85,7 @@ export const CalendarModal = () => {
     const handleSubmitForm = (e) => {
         e.preventDefault();
 
+
         const momentStart = moment(start)
         const momentEnd = moment(end)
 
@@ -100,6 +104,8 @@ export const CalendarModal = () => {
         setValidTitle(true)
         setValidNote(true)
         closeModalBehave()
+        dispatch( eventAddNew(title, start, end, notes))
+        // setformValue()
     }
 
 
@@ -107,7 +113,7 @@ export const CalendarModal = () => {
         <div>
             <Modal
                 isOpen={modalOpen}   //modalBehave to add new state
-                onRequestClose={closeModal}
+                onRequestClose={closeModalBehave}
                 closeTimeoutMS={200}
                 style={customStyles}
                 className="modal"
