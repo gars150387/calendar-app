@@ -3,7 +3,8 @@ import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 import Swal from 'sweetalert2';
-import { invalid } from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeModal } from '../../reducers/modalSlice'
 
 
 const customStyles = {
@@ -23,14 +24,15 @@ Modal.setAppElement('#root');
 
 export const CalendarModal = () => {
 
-    // const dispatch = useDispatch()
+    const dispatch = useDispatch()
+
+    const { modalOpen } =  useSelector( state => state.modal)
 
     const now = moment().minutes(0).seconds(0);
 
     const dateStart = now.clone() //to set time from 3.45.52 to 4.00.00
 
     const dateEnd = dateStart.clone().add(1, 'hours');
-
 
     const [formValue, setformValue] = useState({
         title: '',
@@ -48,10 +50,8 @@ export const CalendarModal = () => {
         })
     }
 
-    const [modalBehave, setmodalBehave] = useState(true)  //useState to manipulate modal behave
-
-    const closeModal = () => {
-        setmodalBehave(false)
+    const closeModalBehave = () => {
+        dispatch( closeModal() )
     }
 
     const [startDate, setStartDate] = useState(now.toDate())
@@ -99,17 +99,15 @@ export const CalendarModal = () => {
 
         setValidTitle(true)
         setValidNote(true)
-        closeModal()
-
-
+        closeModalBehave()
     }
 
 
     return (
         <div>
             <Modal
-                isOpen={modalBehave}   //modalBehave to add new state
-                // onRequestClose={closeModal}
+                isOpen={modalOpen}   //modalBehave to add new state
+                onRequestClose={closeModal}
                 closeTimeoutMS={200}
                 style={customStyles}
                 className="modal"
