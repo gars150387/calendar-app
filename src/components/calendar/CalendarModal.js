@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../../reducers/modalSlice'
 import { eventAddNew } from '../../reducers/calendarSlice';
+import { nanoid } from '@reduxjs/toolkit';
 
 
 const customStyles = {
@@ -32,7 +33,12 @@ const initEvent = {
     title: '',
     notes: '',
     start: now.toDate(),
-    end: dateEnd.toDate()
+    end: dateEnd.toDate(),
+    id: nanoid(),
+    user: {
+        id: '123',
+        name: 'Carlos'
+    }
 }
 
 export const CalendarModal = () => {
@@ -43,7 +49,7 @@ export const CalendarModal = () => {
 
     const [formValue, setformValue] = useState(initEvent)
 
-    const { notes, title, start, end } = formValue;
+    const { notes, title, start, end, id } = formValue;
 
     const handleInputChange = ({ target }) => {
         setformValue({
@@ -101,10 +107,9 @@ export const CalendarModal = () => {
             return setValidTitle(false)
         }
 
-        setValidTitle(true)
         setValidNote(true)
         closeModalBehave()
-        dispatch( eventAddNew(title, start, end, notes))
+        dispatch( eventAddNew(id, title, start, end, notes))
         // setformValue()
     }
 

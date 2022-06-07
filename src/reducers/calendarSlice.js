@@ -20,13 +20,15 @@ const calendarSlice = createSlice({
             reducer(state, action) {
                 state.push(action.payload)
             },
-            prepare(title, start, end, notes) {
+            prepare(id, title, start, end, notes, user) {
                 return {
                     payload: {
+                        id,
                         title,
                         start,
                         end,
                         notes,
+                        user,
                     }
                 }
             }

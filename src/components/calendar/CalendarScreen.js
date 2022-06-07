@@ -10,7 +10,7 @@ import { CalendarModal } from './CalendarModal'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendarScreen.css'
 import 'moment/locale/es'  // this is the config to change the language in moment
-import { activedEvent, eventSelected, selectAllEvents }  from '../../reducers/calendarSlice'
+import {  eventSelected, selectAllEvents }  from '../../reducers/calendarSlice'
 
 moment.locale('es')
 
@@ -29,7 +29,6 @@ export const CalendarScreen = () => {
     const doubleCLick = (e) => {
         distpach(openModal())
         distpach( eventSelected())
-        distpach( activedEvent())
     }
 
     const onSelectEvent = (e) => {
