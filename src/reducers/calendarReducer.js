@@ -1,4 +1,3 @@
-import { CalendarEvent } from "../components/calendar/CalendarEvent"
 import moment from 'moment'
 import { types } from "../type/types";
 import { nanoid } from "@reduxjs/toolkit";
@@ -25,6 +24,15 @@ export const calendarReducer = (state = initialState, action) => {
             return {
                 ...state,
                 activeEvent: action.payload
+            }
+        
+        case types.eventAddNew:
+            return {
+                ...state,
+                events: [
+                    ...state.events,
+                    action.payload
+                ]
             }
 
         default:
