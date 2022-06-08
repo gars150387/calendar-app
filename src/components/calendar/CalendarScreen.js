@@ -21,13 +21,12 @@ moment.locale('es')
 
 const localizer = momentLocalizer(moment);
 
-
-
 export const CalendarScreen = () => {
 
-    const { events } = useSelector(state => state.calendar)
-
     const dispatch = useDispatch();
+
+    const { events, activeEvent } = useSelector(state => state.calendar)
+
 
     const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'month')
 
@@ -45,7 +44,7 @@ export const CalendarScreen = () => {
         localStorage.setItem('lastView', e)
     }
 
-    const eventStyleGetter = ({ events, start, end, isSelected }) => {
+    const eventStyleGetter = ( events, start, end, isSelected ) => {
 
         const style = {
             backgroundColor: '#367cf7',
@@ -53,6 +52,10 @@ export const CalendarScreen = () => {
             opacity: 0.8,
             display: 'block',
             color: 'white'
+        }
+
+        return {
+            style
         }
     }
 
@@ -74,7 +77,7 @@ export const CalendarScreen = () => {
                 onView={onViewChange}
                 view={lastView}
                 components={{
-                    events: CalendarEvent
+                    event: CalendarEvent
                 }}
             />
 
