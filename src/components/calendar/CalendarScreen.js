@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
-import { nanoid } from '@reduxjs/toolkit'
 
 import { messages } from '../helper/calendar-messages-es'
 import { Navbar } from '../ui/Navbar'
@@ -10,6 +9,7 @@ import { CalendarEvent } from './CalendarEvent'
 import { CalendarModal } from './CalendarModal'
 import { uiOpenModal } from '../../actions/ui'
 import { eventSetActive } from '../../actions/events'
+import { AddNewFab } from '../ui/AddNewFab'
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendarScreen.css'
@@ -27,28 +27,17 @@ export const CalendarScreen = () => {
 
     const { events } = useSelector(state => state.calendar)
 
-    // const events = [{
-    //                 id: nanoid(),
-    //                 title: 'Testing',
-    //                 start:moment().startOf().toDate(),
-    //                 end:moment().add(2, 'hours').toDate(),
-    //                 bgcolor: '#fafafa',
-    //                 notes: 'valor initial',
-    //         }]
-
-    const distpach = useDispatch();
-
+    const dispatch = useDispatch();
 
     const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'month')
 
-
     const doubleCLick = (e) => {
-        distpach(uiOpenModal())
-        distpach( eventSetActive(e))
+        dispatch(uiOpenModal())
+        dispatch(eventSetActive(e))
     }
 
     const onSelectEvent = (e) => {
-        distpach(eventSetActive(e))
+        dispatch(eventSetActive(e))
     }
 
     const onViewChange = (e) => {
@@ -89,6 +78,8 @@ export const CalendarScreen = () => {
                 }}
             />
 
+
+            <AddNewFab />
             <CalendarModal />
         </div>
     )
