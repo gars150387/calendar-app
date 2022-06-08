@@ -4,9 +4,8 @@ import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal } from '../../reducers/modalSlice'
-import { eventAddNew } from '../../reducers/calendarSlice';
 import { nanoid } from '@reduxjs/toolkit';
+import { uiCloseModal } from '../../actions/ui';
 
 
 const customStyles = {
@@ -45,11 +44,11 @@ export const CalendarModal = () => {
 
     const dispatch = useDispatch()
 
-    const { modalOpen } =  useSelector( state => state.modal)
+    const { modalOpen } =  useSelector( state => state.ui)
 
     const [formValue, setformValue] = useState(initEvent)
 
-    const { notes, title, start, end, id } = formValue;
+    const { notes, title, start, end, id, user } = formValue;
 
     const handleInputChange = ({ target }) => {
         setformValue({
@@ -59,7 +58,7 @@ export const CalendarModal = () => {
     }
 
     const closeModalBehave = () => {
-        dispatch( closeModal() )
+        dispatch( uiCloseModal() )
         setformValue( initEvent )
     }
 
@@ -107,10 +106,9 @@ export const CalendarModal = () => {
             return setValidTitle(false)
         }
 
-        setValidNote(true)
-        closeModalBehave()
-        dispatch( eventAddNew(id, title, start, end, notes))
-        // setformValue()
+        // setValidNote(true)
+        // closeModalBehave()
+        // dispatch()
     }
 
 

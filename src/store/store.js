@@ -1,11 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit'
-import calendarSlice from '../reducers/calendarSlice'
-import  modalSlice  from '../reducers/modalSlice'
+import { applyMiddleware } from 'redux';
+import { compose } from 'redux';
+import { createStore } from 'redux'
+import thunk from 'redux-thunk';
+import {rootReducer} from '../reducers/rootReducer'
 
+const composeEnhancers =
+    (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
-export const store = configureStore({
-    reducer: {
-        modal: modalSlice,
-        calendar: calendarSlice
-    }
-})
+export const store = createStore(
+    rootReducer,
+    composeEnhancers(
+        applyMiddleware( thunk)
+    )
+)
