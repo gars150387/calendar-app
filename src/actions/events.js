@@ -8,6 +8,6 @@ export const eventAddNew = (event) =>({
 })
 
 export const eventSetActive = (event) =>({
-    type: types.eventAddNew,
+    type: types.eventSetActive,
     payload: event
 })
