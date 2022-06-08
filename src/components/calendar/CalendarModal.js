@@ -5,7 +5,9 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from '@reduxjs/toolkit';
+
 import { uiCloseModal } from '../../actions/ui';
+import { eventAddNew } from '../../actions/events';
 
 
 const customStyles = {
@@ -103,12 +105,14 @@ export const CalendarModal = () => {
         }
         
         if (notes.trim().length < 3) {
-            return setValidTitle(false)
+            return setValidNote(false)
         }
 
-        // setValidNote(true)
-        // closeModalBehave()
-        // dispatch()
+        setValidNote(true)
+        closeModalBehave()
+        dispatch(eventAddNew({
+            ...formValue
+        }))
     }
 
 
