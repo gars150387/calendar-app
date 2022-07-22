@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { Calendar, momentLocalizer } from 'react-big-calendar'
-import moment from 'moment'
+import { Calendar,  dateFnsLocalizer } from 'react-big-calendar'
+import { addHours, format, parse, startOfWeek, getDay } from 'date-fns'
+
+import enUS from 'date-fns/locale/en-US'
+
 import { useDispatch, useSelector } from 'react-redux'
 
 import { messages } from '../helper/calendar-messages-es'
@@ -15,11 +18,18 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendarScreen.css'
 import 'moment/locale/es'  // this is the config to change the language in moment
 
+const locales = {
+    'en-US': enUS,
+  }
 
 
-moment.locale('es')
-
-const localizer = momentLocalizer(moment);
+const localizer = dateFnsLocalizer({
+    format,
+    parse,
+    startOfWeek,
+    getDay,
+    locales,
+  })
 
 export const CalendarScreen = () => {
 
