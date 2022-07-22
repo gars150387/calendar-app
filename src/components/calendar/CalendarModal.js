@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import Modal from 'react-modal';
+import DatePicker from "react-datepicker";
 import DateTimePicker from 'react-datetime-picker';
-import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from '@reduxjs/toolkit';
 
 import { uiCloseModal } from '../../actions/ui';
 import { eventAddNew } from '../../actions/events';
+import { addHours, differenceInMinutes } from 'date-fns';
+
+
+import "react-datepicker/dist/react-datepicker.css";
 
 
 const customStyles = {
@@ -24,17 +28,12 @@ const customStyles = {
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement('#root');
 
-const now = moment().minutes(0).seconds(0);
-
-const dateStart = now.clone() //to set time from 3.45.52 to 4.00.00
-
-const dateEnd = dateStart.clone().add(1, 'hours');
 
 const initEvent = {
     title: '',
     notes: '',
-    start: now.toDate(),
-    end: dateEnd.toDate(),
+    start: new Date(),
+    end: addHours( new Date(), 2),
     id: nanoid(),
     user: {
         id: '123',
@@ -50,7 +49,7 @@ export const CalendarModal = () => {
 
     const [formValue, setformValue] = useState(initEvent)
 
-    const { notes, title, start, end, id, user } = formValue;
+    const { notes, title  } = formValue;
 
     const handleInputChange = ({ target }) => {
         setformValue({
@@ -59,30 +58,16 @@ export const CalendarModal = () => {
         })
     }
 
+    const onDateChanged = ( event, changing ) => {
+        setformValue({
+            ...formValue,
+            [changing]: event
+        })
+    }
+
     const closeModalBehave = () => {
         dispatch( uiCloseModal() )
         setformValue( initEvent )
-    }
-
-    const [startDate, setStartDate] = useState(now.toDate())
-
-    const handleStartDateChange = (e) => {
-        setStartDate(e);
-        setformValue({
-            ...formValue,
-            start: e
-        })
-
-    }
-
-    const [endDate, setEndDate] = useState(dateEnd.toDate())
-
-    const handleEndDateChange = (e) => {
-        setEndDate(e);
-        setformValue({
-            ...formValue,
-            end: e
-        })
     }
 
     const [validTitle, setValidTitle] = useState(true)
@@ -93,22 +78,25 @@ export const CalendarModal = () => {
         e.preventDefault();
 
 
-        const momentStart = moment(start)
-        const momentEnd = moment(end)
+        const difference = differenceInMinutes( formValue.end, formValue.start )
 
-        if (momentStart.isSameOrAfter(momentEnd)) {
-            return Swal.fire('Error', 'testing', 'error')
+        console.log( difference )
+
+        if ( isNaN( difference ) || difference <= 0 ) {
+            return Swal.fire('Error', '', 'error')
         }
 
         if (title.trim().length < 3) {
             return setValidTitle(false)
         }
+        setValidTitle(true)
         
         if (notes.trim().length < 3) {
             return setValidNote(false)
         }
-
         setValidNote(true)
+
+        
         closeModalBehave()
         dispatch(eventAddNew({
             ...formValue
@@ -136,20 +124,24 @@ export const CalendarModal = () => {
 
                     <div className="form-group">
                         <label>Fecha y hora inicio</label>
-                        <DateTimePicker
-                            onChange={handleStartDateChange}
-                            value={startDate}
+                        <DatePicker
+                            selected={ formValue.start }
+                            onChange={(event) => onDateChanged( event, 'start')}
                             className="form-control"
+                            dateFormat="Pp"
+                            showTimeSelect
                         />
                     </div>
 
                     <div className="form-group">
                         <label>Fecha y hora fin</label>
-                        <DateTimePicker
-                            onChange={handleEndDateChange}
-                            value={endDate}
-                            minDate={startDate}  //para validar que la fecha de minima en comparacion a la fecha de inicio
+                        <DatePicker
+                            selected={ formValue.end }
+                            minDate={ formValue.start }
+                            onChange={(event) => onDateChanged( event, 'end')}
                             className="form-control"
+                            dateFormat="Pp"
+                            showTimeSelect
                         />
                     </div>
 
